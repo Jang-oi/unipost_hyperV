@@ -8,17 +8,12 @@ using System.Text.RegularExpressions;
 
 namespace hypervSetting
 {
-
     public partial class Form1 : Form
     {
-        String hostName = Dns.GetHostName();
-        string hostIp = "";
-        Regex ipRegex = new Regex(@"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
-        Regex portproxyRegex = new Regex(@"\*\s+\d+\s+[0-9.]+\s+\d+");
         Cmd cmd = Cmd.Instance;
-
         public string GetLocalIP()
         {
+            string hostIp = "";
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress LocalIPAddress in host.AddressList)
             {
@@ -30,24 +25,21 @@ namespace hypervSetting
             }
             return hostIp;
         }
-
         public Form1()
         {
             InitializeComponent();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
+            String hostName = Dns.GetHostName();
             old_Name.Text = hostName;
             old_Ip.Text = GetLocalIP();
             new_Ip.Text = GetLocalIP();
         }
-
         private void nameChangeBtn_Click(object sender, EventArgs e)
         {
-
+            String hostName = Dns.GetHostName();
             cmd.nameChange(hostName, new_Name.Text);
-
             DialogResult result = MessageBox.Show("컴퓨터를 지금 다시시작하시겠습니까??", "컴퓨터 다시시작", MessageBoxButtons.YesNo);
 
             switch (result)
@@ -63,13 +55,10 @@ namespace hypervSetting
                         break;
                     }
             }
-
-
         }
-
         private void ipChangeBtn_Click(object sender, EventArgs e)
-        {   
-
+        {
+            Regex ipRegex = new Regex(@"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
             if (ipRegex.IsMatch(new_Ip.Text))
             {
                 cmd.ipChange(cmd.getEthernet(), new_Ip.Text);
@@ -85,7 +74,8 @@ namespace hypervSetting
         private void portproxyAddBtn_Click(object sender, EventArgs e)
         {
             Type TextBox = typeof(TextBox);
-
+            Regex ipRegex = new Regex(@"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
+            Regex portproxyRegex = new Regex(@"\*\s+\d+\s+[0-9.]+\s+\d+");
             int spaceChk = 0;
             int caseChk = 0;
             bool wordChk = false;

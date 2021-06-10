@@ -50,6 +50,16 @@ namespace hypervSetting
             cmd.Close();
         }
         /*
+         * cmd 창에 입력할 명령어.
+         * @Param {string} cmd에 넣을 명령어.
+         */
+        public void standardInput(string input) 
+        {
+            cmd.StandardInput.Write(@input + Environment.NewLine);
+            cmd.StandardInput.Flush();
+            cmd.StandardInput.Close();
+        }
+        /*
          * ipconfig 입력해 나온 텍스트를 이용해 사용할 ethernet 주소 값 출력
          * @Return {string} ethernet에 대한 값 ex) 이더넷 13 
          */
@@ -57,9 +67,7 @@ namespace hypervSetting
         {
             start();
             string ethernet = "";
-            cmd.StandardInput.Write(@"ipconfig" + Environment.NewLine);
-            cmd.StandardInput.Flush();
-            cmd.StandardInput.Close();
+            standardInput("ipconfig");
             string resultValue = cmd.StandardOutput.ReadToEnd();
             string[] resultLines = resultValue.Split('\n');
             List<string> ethernetArr = new List<string>();
@@ -97,9 +105,7 @@ namespace hypervSetting
         public void ncpacpl()
         {
             start();
-            cmd.StandardInput.Write(@"ncpa.cpl" + Environment.NewLine);
-            cmd.StandardInput.Flush();
-            cmd.StandardInput.Close();
+            standardInput("ncpa.cpl");
             stop();
         }
         /*
@@ -127,10 +133,7 @@ namespace hypervSetting
         public void nameChange(string hostName, string new_Name)
         {
             start();
-            cmd.StandardInput.Write(@"wmic ComputerSystem Where Name=""" + hostName + "\" Call Rename Name=\"" + new_Name + "\"" + Environment.NewLine);
-
-            cmd.StandardInput.Flush();
-            cmd.StandardInput.Close();
+            standardInput("wmic ComputerSystem Where Name="+"" + hostName + "\" Call Rename Name=\"" + new_Name + "\"");
             stop();
         }
 
@@ -141,9 +144,7 @@ namespace hypervSetting
         public void portproxyDel(decimal listenport)
         {
             start();
-            cmd.StandardInput.Write(@"netsh interface portproxy delete v4tov4 listenport=" + listenport + "" + Environment.NewLine);
-            cmd.StandardInput.Flush();
-            cmd.StandardInput.Close();
+            standardInput("netsh interface portproxy delete v4tov4 listenport=" + listenport + "");
             stop();
         }
 
@@ -153,9 +154,7 @@ namespace hypervSetting
         public void portproxyReset()
         {
             start();
-            cmd.StandardInput.Write(@"netsh interface portproxy reset" + Environment.NewLine);
-            cmd.StandardInput.Flush();
-            cmd.StandardInput.Close();
+            standardInput("netsh interface portproxy reset");
             stop();
         }
 
@@ -166,12 +165,8 @@ namespace hypervSetting
         public string portproxyView()
         {
             start();
-            cmd.StandardInput.Write(@"netsh interface portproxy show all" + Environment.NewLine);
-
-            cmd.StandardInput.Flush();
-            cmd.StandardInput.Close();
+            standardInput("netsh interface portproxy show all");
             string resultValue = cmd.StandardOutput.ReadToEnd();
-
             stop();
             return resultValue;
         }
@@ -188,15 +183,13 @@ namespace hypervSetting
             if (connectport > 0)
             {
                 cmd.StandardInput.Write(@"netsh interface portproxy add v4tov4 listenport=" + listenport + " connectport=" + connectport + " connectaddress=" + connectaddress + "" + Environment.NewLine);
-                cmd.StandardInput.Flush();
-                cmd.StandardInput.Close();
             }
             else
             {
                 cmd.StandardInput.Write(@"netsh interface portproxy delete v4tov4 listenport=" + listenport + "" + Environment.NewLine);
-                cmd.StandardInput.Flush();
-                cmd.StandardInput.Close();
             }
+            cmd.StandardInput.Flush();
+            cmd.StandardInput.Close();
             stop();
         }
         /*
@@ -212,7 +205,6 @@ namespace hypervSetting
                 cmd.StandardInput.Write(@"netsh interface portproxy add v4tov4 listenport=80 connectport=80 connectaddress=" + connectaddress + "" + Environment.NewLine);
                 cmd.StandardInput.Write(@"netsh interface portproxy add v4tov4 listenport=443 connectport=443 connectaddress=" + connectaddress + "" + Environment.NewLine);
                 cmd.StandardInput.Write(@"netsh interface portproxy add v4tov4 listenport=8082 connectport=8082 connectaddress=" + connectaddress + "" + Environment.NewLine);
-
             }
             if (caseChk == 2)
             {
